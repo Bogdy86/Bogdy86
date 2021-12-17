@@ -1,0 +1,43 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn import metrics
+import matplotlib.pyplot as plt  
+from sklearn import linear_model
+from mpl_toolkits.mplot3d import axes3d
+%matplotlib qt
+from sklearn.metrics import r2_score
+df=pd.read_csv('CarPrice_Assignment.csv')
+df=pd.get_dummies(df,columns=['fueltype','aspiration','doornumber','carbody','drivewheel','enginelocation','fuelsystem','enginetype','cylindernumber'])
+X=df.iloc[:,2:].values
+Y=df.iloc[:,1].values
+fig=plt.figure()
+ax=fig.add_subplot(111,projection='3d')
+ax.scatter(X[:,0],X[:,1],Y, c='r', marker='o')
+ax.scatter(X[:,0],X[:,1],Y, c='r', marker='o')
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Price')
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.30, random_state = 0)
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train=sc.fit_transform(X_train)
+X_test=sc.transform(X_test)
+print('Variance of the covariance: ',np.var(X_train))
+print('Standatd deviation of the covariance: ',np.std(X_train)) 
+np.std(X[:,0])
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train,y_train)
+df_head.plot(kind='bar',figsize=(10,8))
+plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
+plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
+plt.show()
+df_head.plot(kind='bar',figsize=(10,8))
+plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
+plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
+plt.show()
+print('Mean:', np.mean(y_test))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+print('Correletion ', r2_score(y_test, y_pred))
