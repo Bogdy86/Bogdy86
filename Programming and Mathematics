@@ -1,0 +1,88 @@
+#Task2#
+from sklearn.datasets import make_regression
+import matplotlib.pyplot as plt
+import numpy as np
+from numpy.random import default_rng
+rng=default_rng()
+a, b=make_regression(n_samples=300,n_features=1, noise=4, random_state=10)
+outliersA = rng.normal(-4,1, (4,4))
+outliersB = rng.normal(2,3, (4,4))
+X=np.append(a, outliersA)
+y=np.append(b, outliersB)
+data=np.concatenate((X.reshape(len(X),1),y.reshape(len(y),1)),1)
+plt.scatter(X, y, color='red')
+plt.show
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test=train_test_split(X, y, test_size=0.25, random_state=0)
+X_train=X_train[:,np.newaxis]
+from sklearn.linear_model import LinearRegression
+regressor=LinearRegression()
+regressor.fit(X_train, y_train)
+X_test=X_test[:,np.newaxis]
+plt.scatter(X_test, y_test, color='red')
+plt.plot(X_train, regressor.predict(X_train), color='blue')
+plt.show()
+plt.hist(X,bins=15, rwidth=3)
+plt.show()
+print('Coeficient: ',regressor.coef_)
+print('Intercept: ',regressor.intercept_)
+from sklearn.metrics import mean_squared_error, r2_score
+print('RMSE: ',np.sqrt(mean_squared_error(y_test, y_pred)))
+print('Correletion ', r2_score(y_test, y_pred))
+from sklearn.metrics import mean_squared_error, r2_score
+print('RMSE: ',np.sqrt(mean_squared_error(y_test, y_pred)))
+print('Correletion ', r2_score(y_test, y_pred))
+print('Variance of the covariance: ',X.var())
+print('Standatd deviation of the covariance: ',X.std()) 
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+upper_limit=X.mean()+2*X.std()
+upper_limit
+lower_limit=X.mean()-2*X.std()
+lower_limit
+ata[(X>upper_limit)|(X<lower_limit)]
+new_data=data[(X<upper_limit)&(X>lower_limit)]
+new_data
+new_data.shape
+X2=new_data[:,:1]
+Y2=new_data[:,-1]
+X2=new_data[:,:1]
+Y2=new_data[:,-1]
+plt.scatter(X2, Y2, color='red')
+plt.show
+X2_train, X2_test, y2_train, y2_test=train_test_split(X2, Y2, test_size=0.25, random_state=0)
+regressor2=LinearRegression()
+regressor2.fit(X2_train, y2_train)
+plt.scatter(X2_train, y2_train, color='red')
+plt.plot(X2_train, regressor2.predict(X2_train), color='blue')
+plt.show()
+plt.scatter(X2_train, y2_train, color='red')
+plt.plot(X2_train, regressor2.predict(X2_train), color='blue')
+plt.show()
+plt.scatter(X2_test, y2_test, color='red')
+plt.plot(X2_train, regressor2.predict(X2_train), color='blue')
+plt.show()
+print('Coeficient: ',regressor2.coef_)
+print('Intercept: ',regressor2.intercept_)
+print('RMSE: ',np.sqrt(mean_squared_error(y2_test, y2_pred)))
+print('Correletion ', r2_score(y2_test, y2_pred))
+print('Variance of the covariance: ',np.var(X2))
+print('Standatd deviation of the covariance: ',np.std(X2))
+plt.hist(X2,bins=15, rwidth=3)
+plt.show()
+X=X[:,np.newaxis]
+y=y[:,np.newaxis]
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X = sc.fit_transform(X)
+y= sc.transform(y)
+X2_train = sc.fit_transform(X2_train)
+X2_test = sc.transform(X2_test)
+plt.hist(X_train,bins=15, rwidth=3)
+plt.show()
+plt.scatter(X,y,color='red')
+plt.show()
+plt.hist(X2_train,bins=15, rwidth=3)
+plt.show()
