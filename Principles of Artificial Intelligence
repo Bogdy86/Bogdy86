@@ -7,37 +7,188 @@ from sklearn import linear_model
 from mpl_toolkits.mplot3d import axes3d
 %matplotlib qt
 from sklearn.metrics import r2_score
+#Load the dataframe
 df=pd.read_csv('CarPrice_Assignment.csv')
-df=pd.get_dummies(df,columns=['fueltype','aspiration','doornumber','carbody','drivewheel','enginelocation','fuelsystem','enginetype','cylindernumber'])
-X=df.iloc[:,2:].values
-Y=df.iloc[:,1].values
+df=df.iloc[:,1:]
+
+#Separate Depenedent and Independent Variables for a first 3d Graph
+X1=df.iloc[:,:-1].values
+Y1=df.iloc[:,-1].values
+#3d Graph
 fig=plt.figure()
 ax=fig.add_subplot(111,projection='3d')
-ax.scatter(X[:,0],X[:,1],Y, c='r', marker='o')
-ax.scatter(X[:,0],X[:,1],Y, c='r', marker='o')
+ax.scatter(X1[:,10],X1[:,11],Y1, c='r', marker='o')
+ax.scatter(X1[:,12],X1[:,13],Y1, c='b', marker='o')
+ax.scatter(X1[:,14],X1[:,15],Y1, c='g', marker='o')
+ax.scatter(X1[:,16],X1[:,17],Y1, c='y', marker='o')
+ax.scatter(X1[:,18],X1[:,19],Y1, c='c', marker='o')
+ax.scatter(X1[:,20],X1[:,21],Y1, c='w', marker='o')
+ax.scatter(X1[:,22],X1[:,23],Y1, c='b', marker='o')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Price')
+#Checking the numerical values
+df.describe()
+#Eliminate outliers with the help of zscore
+df['zscore']=(df.curbweight-df.curbweight.mean())/df.curbweight.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df['zscore']=(df.peakrpm-df.peakrpm.mean())/df.peakrpm.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df['zscore']=(df.horsepower-df.horsepower.mean())/df.horsepower.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df['zscore']=(df.enginesize-df.enginesize.mean())/df.enginesize.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df['zscore']=(df.compressionratio-df.compressionratio.mean())/df.compressionratio.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df['zscore']=(df.wheelbase-df.wheelbase.mean())/df.wheelbase.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df['zscore']=(df.highwaympg-df.highwaympg.mean())/df.highwaympg.std()
+df=df[(df.zscore>-2)&(df.zscore<2)]
+df.describe()
+#Drop de zscore from the dataframe
+df=df.drop(['zscore'], axis='columns')
+df
+#Check the shape of data frame
+df.shape
+X2=df.iloc[:,:-1].values
+Y2=df.iloc[:,-1].values
+#3d graph
+fig=plt.figure()
+ax=fig.add_subplot(111,projection='3d')
+ax.scatter(X2[:,10],X2[:,11],Y2, c='r', marker='o')
+ax.scatter(X2[:,12],X2[:,13],Y2, c='b', marker='o')
+ax.scatter(X2[:,14],X2[:,15],Y2, c='g', marker='o')
+ax.scatter(X2[:,16],X2[:,17],Y2, c='y', marker='o')
+ax.scatter(X2[:,18],X2[:,19],Y2, c='c', marker='o')
+ax.scatter(X2[:,20],X2[:,21],Y2, c='w', marker='o')
+ax.scatter(X2[:,22],X2[:,23],Y2, c='b', marker='o')
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Price')
+#Creating the dummy variables
+d1=pd.get_dummies(df.fueltype)
+d1=d1.iloc[:,1:]
+d2=pd.get_dummies(df.aspiration)
+d2=d2.iloc[:,1:]
+d3=pd.get_dummies(df.doornumber)
+d3=d3.iloc[:,1:]
+d4=pd.get_dummies(df.carbody)
+d4=d4.iloc[:,1:]
+d5=pd.get_dummies(df.drivewheel)
+d5=d5.iloc[:,1:]
+d6=pd.get_dummies(df.enginelocation)
+d6=d6.iloc[:,1:]
+d7=pd.get_dummies(df.fuelsystem)
+d7=d7.iloc[:,:-1]
+d8=pd.get_dummies(df.enginetype)
+d8=d8.iloc[:,1:]
+d9=pd.get_dummies(df.cylindernumber)
+d9=d9.iloc[:,1:]
+d10=pd.get_dummies(df.CarName)
+d10=d10.iloc[:,1:]
+#Add the dummy variables to the dataframe
+df1=pd.concat([d10,d1,d2,d3,d4,d5,d6,d7,d8,d9,df],axis='columns')
+df1
+#Drop the non-numerical values from the data frame
+df1=df1.drop(['CarName','fueltype','aspiration', 'doornumber', 'carbody','drivewheel', 'enginelocation', 'fuelsystem', 'enginetype',
+       'cylindernumber'],axis='columns')
+       #Separate de dependend and independent values
+X=df1.iloc[:,:-1].values
+Y=df1.iloc[:,-1].values
+#Separate the testing data fron the training data
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.30, random_state = 0)
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.20, random_state = 0)
+#Feature scaling data
 from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
 X_train=sc.fit_transform(X_train)
 X_test=sc.transform(X_test)
-print('Variance of the covariance: ',np.var(X_train))
-print('Standatd deviation of the covariance: ',np.std(X_train)) 
-np.std(X[:,0])
-from sklearn.linear_model import LinearRegression
-regressor = LinearRegression()
-regressor.fit(X_train,y_train)
+#Creating the model
+from sklearn.ensemble import RandomForestRegressor
+regressor = RandomForestRegressor(n_estimators = 25, random_state = 0)
+regressor.fit(X_test, y_test)
+#Training the model
+y_pred = regressor.predict(X_test)
+#Compare the predicted values with the testing values
+df_compare = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred, 'Dif':y_test-y_pred})
+df_head = df_compare.head(40)
+print(df_head)
+#Printing the mean, RMSE and the r2 score of the model
 df_head.plot(kind='bar',figsize=(10,8))
 plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
 plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
 plt.show()
-df_head.plot(kind='bar',figsize=(10,8))
-plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
-plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
-plt.show()
+
 print('Mean:', np.mean(y_test))
 print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
 print('Correletion ', r2_score(y_test, y_pred))
+
+****NEURAL NETWORK***
+****TENSORFLOW****
+#Importing libraries
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+#from numpy.random import seed
+#seed(1)
+import pandas as pd
+import statsmodels.api as sm
+#import statsmodels.formula.api as smf
+import tensorflow
+tensorflow.random.set_seed(1)
+from tensorflow.python.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.python.keras.models import Sequential
+#from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+#Numerical Data
+wheelbase =df['wheelbase']
+carlength=df['carlength']
+carwidth=df['carwidth']
+carheight= df['carheight']
+curbweight=df['curbweight']
+enginesize=df['enginesize']
+boreratio=df['boreratio']
+stroke=df['stroke']
+compressionratio=df['compressionratio']
+horsepower=df['horsepower']
+peakrpm=df['peakrpm']
+citympg=df['citympg']
+highwaympg=df['highwaympg']
+price=df['price']
+#Dependent values
+y = np.array(price)
+#Encoding the categorical data
+Insurence=df['InsuranceRisk']
+CarName = df.CarName.astype("category").cat.codes
+CarName=pd.Series(CarName)
+fuelType=df.fueltype.astype('category').cat.codes
+fuelType=pd.Series(fuelType)
+asp=df.aspiration.astype('category').cat.codes
+asp=pd.Series(asp)
+door=df.doornumber.astype('category').cat.codes
+door=pd.Series(door)
+carbody=df.carbody.astype('category').cat.codes
+carbody=pd.Series(carbody)
+drivewheel=df.drivewheel.astype('category').cat.codes
+drivewheel=pd.Series(drivewheel)
+engineLoc=df.enginelocation.astype('category').cat.codes
+engineLoc=pd.Series(engineLoc)
+fuelsSystem=df.fuelsystem.astype('category').cat.codes
+fuelsSystem=pd.Series(fuelsSystem)
+engineType=df.enginetype.astype('category').cat.codes
+engineType=pd.Series(engineType)
+cylinder=df.cylindernumber.astype('category').cat.codes
+cylinder=pd.Series(cylinder)
+#Stack togheter the numerica and categorical values
+x = np.column_stack((CarName,Insurence,fuelType,asp,door,carbody,drivewheel,engineLoc,fuelsSystem,engineType,cylinder,
+                    wheelbase,carlength,carwidth,carheight,curbweight,enginesize,boreratio,stroke,compressionratio,horsepower,
+                     peakrpm,citympg,highwaympg))
+x = sm.add_constant(x, prepend=True)
+#Separate the testing data fron the training data
+X_train, X_test, y_train, y_test = train_test_split(x, y)
+
+
