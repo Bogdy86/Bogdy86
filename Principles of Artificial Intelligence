@@ -24,32 +24,124 @@ ax.scatter(X1[:,16],X1[:,17],Y1, c='y', marker='o')
 ax.scatter(X1[:,18],X1[:,19],Y1, c='c', marker='o')
 ax.scatter(X1[:,20],X1[:,21],Y1, c='w', marker='o')
 ax.scatter(X1[:,22],X1[:,23],Y1, c='b', marker='o')
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
+ax.set_xlabel('X1')
+ax.set_ylabel('X2')
 ax.set_zlabel('Price')
+#Graph that shows the distribution
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['wheelbase'])
+plt.subplot(1,2,2)
+sns.distplot(df['carlength'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['carwidth'])
+plt.subplot(1,2,2)
+sns.distplot(df['carheight'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['curbweight'])
+plt.subplot(1,2,2)
+sns.distplot(df['enginesize'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['boreratio'])
+plt.subplot(1,2,2)
+sns.distplot(df['stroke'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['compressionratio'])
+plt.subplot(1,2,2)
+sns.distplot(df['horsepower'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['peakrpm'])
+plt.subplot(1,2,2)
+sns.distplot(df['citympg'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['curbweight'])
+plt.subplot(1,2,2)
+sns.distplot(df['enginesize'])
+plt.show()
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(df['highwaympg'])
+plt.show()
+
+
 #Checking the numerical values
 df.describe()
 #Eliminate outliers with the help of zscore
-df['zscore']=(df.curbweight-df.curbweight.mean())/df.curbweight.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df['zscore']=(df.peakrpm-df.peakrpm.mean())/df.peakrpm.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df['zscore']=(df.horsepower-df.horsepower.mean())/df.horsepower.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df['zscore']=(df.enginesize-df.enginesize.mean())/df.enginesize.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df['zscore']=(df.compressionratio-df.compressionratio.mean())/df.compressionratio.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df['zscore']=(df.wheelbase-df.wheelbase.mean())/df.wheelbase.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df['zscore']=(df.highwaympg-df.highwaympg.mean())/df.highwaympg.std()
-df=df[(df.zscore>-2)&(df.zscore<2)]
-df.describe()
-#Drop de zscore from the dataframe
-df=df.drop(['zscore'], axis='columns')
+#check the outliers
+def plot_boxplot(dff, ft):
+    dff.boxplot(column=[ft])
+    plt.grid(False)
+    plt.show()
+plot_boxplot(df,'wheelbase')
+plot_boxplot(df,'carlength')
+plot_boxplot(df,'carwidth')
+plot_boxplot(df,'carheight')
+plot_boxplot(df,'curbweight')
+plot_boxplot(df,'enginesize')
+plot_boxplot(df,'enginesize')
+plot_boxplot(df,'boreratio')
+plot_boxplot(df, 'stroke')
+plot_boxplot(df,'compressionratio')
+plot_boxplot(df, 'horsepower')
+plot_boxplot(df,'peakrpm')
+plot_boxplot(df,'citympg')
+plot_boxplot(df,'highwaympg')
+#Eliminate outliers
+def outliers(dff, ft):
+    Q1=dff[ft].quantile(0.20)
+    Q3=dff[ft].quantile(0.70)
+    IQR=Q3-Q1
+    
+    lower_bound=Q1-1.5*IQR
+    upper_bound=Q3+1.5*IQR
+    ls=dff.index[(dff[ft]<lower_bound)|(dff[ft]>upper_bound)]
+    return ls
+index_list=[]
+for feature in ['wheelbase', 'carlength', 'carwidth',
+        'enginesize', 'stroke',
+       'compressionratio', 'horsepower', 'peakrpm', 'citympg', 'highwaympg']:
+    index_list.extend(outliers(df,feature))
+def remove(dff, ls):
+    ls=sorted(set(ls))
+    dff=dff.drop(ls)
+    return dff
+df=remove(df,index_list)
+df.shape
+plot_boxplot(df,'wheelbase')
+plot_boxplot(df,'carlength')
+plot_boxplot(df,'carwidth')
+plot_boxplot(df,'enginesize')
+plot_boxplot(df, 'stroke') 
+plot_boxplot(df,'compressionratio')
+plot_boxplot(df, 'horsepower')
+plot_boxplot(df,'peakrpm')
+plot_boxplot(df,'citympg')
+plot_boxplot(df,'highwaympg')
 df
 #Check the shape of data frame
 df.shape
+df.describe()
+
 X2=df.iloc[:,:-1].values
 Y2=df.iloc[:,-1].values
 #3d graph
@@ -62,9 +154,16 @@ ax.scatter(X2[:,16],X2[:,17],Y2, c='y', marker='o')
 ax.scatter(X2[:,18],X2[:,19],Y2, c='c', marker='o')
 ax.scatter(X2[:,20],X2[:,21],Y2, c='w', marker='o')
 ax.scatter(X2[:,22],X2[:,23],Y2, c='b', marker='o')
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
+ax.set_xlabel('X1')
+ax.set_ylabel('X2')
 ax.set_zlabel('Price')
+#Checking the multicolliniarity
+X3=df.iloc[:,11:-1]
+X3
+X_n=np.linalg.inv(X3.corr())
+X_n=pd.DataFrame(data=X_n, index=X3.columns, columns=X3.columns)
+print(X_n)
+sns.heatmap(data=X_n, cmap='Blues', annot=True)
 #Creating the dummy variables
 d1=pd.get_dummies(df.fueltype)
 d1=d1.iloc[:,1:]
@@ -97,20 +196,20 @@ X=df1.iloc[:,:-1].values
 Y=df1.iloc[:,-1].values
 #Separate the testing data fron the training data
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.20, random_state = 0)
+X_train0, X_test0, y_train0, y_tes0t = train_test_split(X, Y, test_size = 0.20, random_state = 42)
 #Feature scaling data
 from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
-X_train=sc.fit_transform(X_train)
-X_test=sc.transform(X_test)
+X_train0=sc.fit_transform(X_train0)
+X_test0=sc.transform(X_test0)
 #Creating the model
 from sklearn.ensemble import RandomForestRegressor
-regressor = RandomForestRegressor(n_estimators = 25, random_state = 0)
-regressor.fit(X_test, y_test)
+regressor = RandomForestRegressor(n_estimators = 4, random_state = 0)
+regressor.fit(X_train0, y_traint0)
 #Training the model
-y_pred = regressor.predict(X_test)
+y_pred0 = regressor.predict(X_test0)
 #Compare the predicted values with the testing values
-df_compare = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred, 'Dif':y_test-y_pred})
+df_compare = pd.DataFrame({'Actual': y_test0, 'Predicted': y_pred0, 'Dif':y_test0-y_pred0})
 df_head = df_compare.head(40)
 print(df_head)
 #Printing the mean, RMSE and the r2 score of the model
@@ -119,9 +218,9 @@ plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
 plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
 plt.show()
 
-print('Mean:', np.mean(y_test))
-print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
-print('Correletion ', r2_score(y_test, y_pred))
+print('Mean:', np.mean(y_test0))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test0, y_pred0)))
+print('Correletion ', r2_score(y_test0, y_pred0))
 
 ****NEURAL NETWORK***
 ****TENSORFLOW****
@@ -189,6 +288,54 @@ x = np.column_stack((CarName,Insurence,fuelType,asp,door,carbody,drivewheel,engi
                      peakrpm,citympg,highwaympg))
 x = sm.add_constant(x, prepend=True)
 #Separate the testing data fron the training data
-X_train, X_test, y_train, y_test = train_test_split(x, y)
+X_train1, X_test1, y_train1, y_test1 = train_test_split(x, y,test_size=0.33, random_state=42)
+#Feature scalling the data 
+y_train1=np.reshape(y_train1, (-1,1))
+y_test1=np.reshape(y_test1, (-1,1))
 
+scale_x = MinMaxScaler()
+scale_y = MinMaxScaler()
+
+print(scale_x.fit(X_train1))
+xtrain_scale=scale_x.transform(X_train1)
+print(scale_x.fit(X_test1))
+xtest_scale=scale_x.transform(X_test1)
+
+print(scale_y.fit(y_train1))
+ytrain_scale=scale_y.transform(y_train1)
+print(scale_y.fit(y_test1))
+ytest_scale=scale_y.transform(y_test1)
+#Creating the neural network sequential model
+model1 = Sequential()
+model1.add(Dense(25, input_dim=25, kernel_initializer='normal', activation='relu'))
+model1.add(Dense(15, activation='relu'))
+model1.add(Dense(15, activation='relu'))
+
+model1.add(Dense(1, activation='sigmoid'))
+model1.summary()
+#Training the model
+model1.compile(loss='mse', optimizer='adam', metrics=['mse','mae'])
+m=model1.fit(xtrain_scale, ytrain_scale, epochs=150, batch_size=15, verbose=1, validation_split=0.2)
+predictions = model1.predict(xtest_scale)
+#Plot the iterations
+print(m.history.keys())
+plt.plot(m.history['loss'])
+plt.plot(m.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()
+#Compare results
+y_pred1 = scale_y.inverse_transform(predictions)
+y_test1 = scale_y.inverse_transform(ytest_scale)
+print(f'   {"PREDICTED":}   {"ACTUAL":}   {"DIFF":}')
+for i in range(20):
+    diff = np.abs(y_pred1[i].item()-y_test1[i].item())
+    print(f'{i+1}.  {y_pred1[i].item():.2f}  {y_test1[i].item():.2f}  {diff:.2f}')
+#Printing the mean, RMSE and the r2 score of the model
+mean_squared_error(y_test1,y_pred1)
+print('RMSE:',math.sqrt(mean_squared_error(y_test1,y_pred1)))
+print('Mean:',np.mean(y_test1))
+print('Correletion ', r2_score(y_test1, y_pred1))
 
