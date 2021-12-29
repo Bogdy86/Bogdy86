@@ -194,3 +194,27 @@ print('Coeficient: ',regressor03.coef_)
 print('Intercept: ',regressor03.intercept_)
 print('RMSE: ',np.sqrt(mean_squared_error(y_test03, y_pred03)))
 print('Correletion ', r2_score(y_test03, y_pred03))
+
+
+#####TASK3#####
+#Import libraries
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+#Load dataframe
+test_data=pd.read_csv("fashion-mnist_test.csv")
+train_data=pd.read_csv('fashion-mnist_train.csv')
+#Separate the data
+test_data = np.array(test_data)
+o, p = test_data.shape
+test_data = test_data.T
+Y_test = test_data[0]
+X_test = test_data[1:p]
+X_test = X_test/ X_test.max()
+
+train_data = np.array(train_data)
+o, p = train_data.shape
+train_data = train_data.T
+Y_train = train_data[0]
+X_train = train_data[1:p]
+X_train = X_train / X_train.max()
