@@ -86,3 +86,111 @@ plt.scatter(X,y,color='red')
 plt.show()
 plt.hist(X2_train,bins=15, rwidth=3)
 plt.show()
+
+*****NORMALIZATION****
+#Creating the data set and the 3D graph
+from mpl_toolkits.mplot3d import axes3d
+%matplotlib qt
+X01 = rng.normal(10000,100000, (150,1))
+X11 = rng.normal(5,30, (150,1)) 
+Y01=rng.normal(30,300,(150,1))
+fig=plt.figure()
+ax=fig.add_subplot(111,projection='3d')
+ax.scatter(X01,X11,Y01, c='r', marker='o')
+ax.set_xlabel('X1')
+ax.set_ylabel('X2')
+ax.set_zlabel('Y')
+#First normalization of the data
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X02=sc.fit_transform(X01)
+#3D graph after the feature scalling
+from mpl_toolkits.mplot3d import axes3d
+%matplotlib qt
+fig=plt.figure()
+ax=fig.add_subplot(111,projection='3d')
+ax.scatter(X02,X11,Y01, c='r', marker='o')
+ax.set_xlabel('X1')
+ax.set_ylabel('X2')
+ax.set_zlabel('Y')
+#Graph that shows the distribution
+import warnings
+import seaborn as sns
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(X01)
+plt.subplot(1,2,2)
+sns.distplot(X02)
+plt.show()
+#Concatenate the independent varaibles before the normalization
+dataX01=np.concatenate((X01.reshape(len(X01),1), X11.reshape(len(X11),1),),1)
+#Separate the test and train set
+from sklearn.model_selection import train_test_split
+X_train0, X_test0, y_train0, y_test0=train_test_split(dataX01, Y01, test_size=0.25, random_state=42)
+#Creating the linear regression model
+from sklearn.linear_model import LinearRegression
+regressor0=LinearRegression()
+regressor0.fit(X_train0, y_train0)
+#Creating the predinctions
+y_pred0=regressor0.predict(X_test0)
+#Showing the coefficints, the correlation and the root mean square error
+print('Coeficient: ',regressor0.coef_)
+print('Intercept: ',regressor0.intercept_)
+print('RMSE: ',np.sqrt(mean_squared_error(y_test0, y_pred0)))
+print('Correletion ', r2_score(y_test0, y_pred0))
+#Concatenate the independent varaibles after first normalization
+dataX02=np.concatenate((X02.reshape(len(X02),1), X11.reshape(len(X11),1),),1)
+#Separate the test and train set
+from sklearn.model_selection import train_test_split
+X_train02, X_test02, y_train02, y_test02=train_test_split(dataX02, Y01, test_size=0.25, random_state=42)
+#Creating the linear regression model
+from sklearn.linear_model import LinearRegression
+regressor02=LinearRegression()
+regressor02.fit(X_train02, y_train02)
+#Creating the predinctions
+y_pred02=regressor02.predict(X_test02)
+#Showing the coefficints, the correlation and the root mean square error
+print('Coeficient: ',regressor02.coef_)
+print('Intercept: ',regressor02.intercept_)
+print('RMSE: ',np.sqrt(mean_squared_error(y_test02, y_pred02)))
+print('Correletion ', r2_score(y_test02, y_pred02))
+#Second normalization of the data
+from sklearn.preprocessing import MinMaxScaler
+sc2=MinMaxScaler()
+X03=sc2.fit_transform(X01)
+#3D graph after the feature scalling
+from mpl_toolkits.mplot3d import axes3d
+%matplotlib qt
+fig=plt.figure()
+ax=fig.add_subplot(111,projection='3d')
+ax.scatter(X03,X11,Y01, c='r', marker='o')
+ax.set_xlabel('X1')
+ax.set_ylabel('X2')
+ax.set_zlabel('Y')
+#Graph that shows the distribution
+import warnings
+import seaborn as sns
+warnings.filterwarnings('ignore')
+plt.figure(figsize=(16,5))
+plt.subplot(1,2,1)
+sns.distplot(X01)
+plt.subplot(1,2,2)
+sns.distplot(X03)
+plt.show()
+#Concatenate the independent varaibles after first normalization
+dataX03=np.concatenate((X03.reshape(len(X03),1), X11.reshape(len(X11),1),),1)
+#Separate the test and train set
+from sklearn.model_selection import train_test_split
+X_train03, X_test03, y_train03, y_test03=train_test_split(dataX03, Y01, test_size=0.25, random_state=42)
+#Creating the linear regression model
+from sklearn.linear_model import LinearRegression
+regressor03=LinearRegression()
+regressor03.fit(X_train03, y_train03)
+#Creating the predinctions
+y_pred03=regressor03.predict(X_test03)
+#Showing the coefficints, the correlation and the root mean square error
+print('Coeficient: ',regressor03.coef_)
+print('Intercept: ',regressor03.intercept_)
+print('RMSE: ',np.sqrt(mean_squared_error(y_test03, y_pred03)))
+print('Correletion ', r2_score(y_test03, y_pred03))
