@@ -218,3 +218,127 @@ train_data = train_data.T
 Y_train = train_data[0]
 X_train = train_data[1:p]
 X_train = X_train / X_train.max()
+#Set the weights and the layers
+def parametres():
+    weight1 = np.random.rand(20, 784)-0.5
+    bias1 = np.random.rand(20, 1)-0.5
+    weight1B = np.random.rand(20, 20)-0.5
+    bias1B = np.random.rand(20, 1)-0.5
+    weight1C = np.random.rand(20, 20)-0.5
+    bias1C = np.random.rand(20, 1)-0.5
+    weight2 = np.random.rand(10, 20)-0.5
+    bias2 = np.random.rand(10, 1)-0.5
+    return weight1, bias1,weight1B, bias1B,weight1C, bias1C, weight2, bias2
+#Set the activation functions
+def ReLU(L):
+    return np.maximum(L, 0)
+
+def Softmax(L):
+    S = np.exp(L) / sum(np.exp(L))
+    return S
+
+def Sigmoid(L):
+    SI=1.0/(1.0+np.exp(-L))
+    
+    return SI
+#Set the forward propagation function    
+def forward(weight1, bias1, weight1B, bias1B, weight1C, bias1C , weight2, bias2,  X):
+    Layer1 = weight1.dot(X) + bias1
+    a1 = ReLU(Layer1)
+    
+    Layer1B=weight1B.dot(a1)+bias1B
+    a1B=ReLU(Layer1B)
+    
+    Layer1C=weight1C.dot(a1B)+bias1C
+    a1C=ReLU(Layer1C)
+    
+    Layer2 = weight2.dot(a1C) + bias2
+    a2 = Softmax(Layer2)
+    return Layer1, a1, Layer1B, a1B,Layer1C,a1C, Layer2, a2
+#The derivatives for the activations functions
+def ReLUDev(L):
+    return L > 0
+
+def SigmoidDev(L):
+    SID = 1.0/(1.0+np.exp(-L))*(1-(1.0/(1.0+np.exp(-L))))
+    return SID
+                 
+#Encoding the labels       
+def encoding(Y):
+    encodingY = np.zeros((Y.size, Y.max() + 1))
+    encodingY[np.arange(Y.size), Y] = 1
+    encodingY = encodingY.T
+    return encodingY
+ 
+#Set the back propagation function
+def backward(Layer1, a1,Layer1B, a1B,Layer1C,a1C, Layer2, a2, weight1,weight1B,weight1C, weight2, X, Y):
+    encodingY = encoding(Y)
+    dLayer2 = a2 - encodingY
+    dweight2 = 1 / V * dLayer2.dot(a1C.T)
+    dbias2 = 1 / V * np.sum(dLayer2)
+    
+    dLayer1C=weight2.T.dot(dLayer2) * ReLUDev(Layer1C)
+    dweight1C = 1 / V * dLayer1C.dot(a1B.T)
+    dbias1C = 1 / V * np.sum(dLayer1C)
+    
+    dLayer1B=weight1C.T.dot(dLayer1C) * ReLUDev(Layer1B)
+    dweight1B = 1 / V * dLayer1B.dot(a1.T)
+    dbias1B = 1 / V * np.sum(dLayer1B)
+    
+    dLayer1 = weight1B.T.dot(dLayer1B) * ReLUDev(Layer1)
+    dweight1 = 1 / V * dLayer1.dot(X.T)
+    dbias1 = 1 / V * np.sum(dLayer1)
+    return dweight1, dbias1, dweight1B, dbias1B,dweight1C,dbias1C, dweight2, dbias2
+
+def parametresUpdate(weight1, bias1, weight1B, bias1B,weight1C,bias1C, weight2, bias2,  dweight1, dbias1, dweight1B, dbias1B, dweight1C,dbias1C, dweight2, dbias2, beta):
+    weight1 = weight1 - beta * dweight1
+    bias1 = bias1 - beta * dbias1    
+    
+    weight2 = weight2 - beta * dweight2  
+    bias2 = bias2 - beta * dbias2    
+    
+    weight1B = weight1B - beta * dweight1B.T
+    bias1B = bias1B - beta * dbias1B 
+    
+    weight1C = weight1C - beta * dweight1C.T
+    bias1C = bias1C - beta * dbias1C    
+    return weight1, bias1, weight1B, bias1B, weight1C,bias1C, weight2, bias2 
+#The prediction functions
+def get_pred(a2):
+    return np.argmax(a2,0)
+
+def get_precision(pred, Y):
+    print(pred, Y)
+    return np.sum(pred == Y) / Y.size
+#The gradient descent function
+def gradientDescent(X, Y, beta, iterations):
+    weight1, bias1,weight1B, bias1B, weight1C,bias1C, weight2, bias2  = parametres()
+    for i in range(iterations):
+        Layer1, a1, Layer1B, a1B,Layer1C, a1C, Layer2, a2 = forward( weight1, bias1,weight1B, bias1B, weight1C,bias1C, weight2, bias2, X)
+        dweight1, dbias1,dweight1B, dbias1B,dweight1C,dbias1C, dweight2, dbias2  = backward(Layer1, a1,Layer1B, a1B,Layer1C,a1C, Layer2, a2,  weight1, weight1B,weight1C, weight2, X, Y)
+        weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2 = parametresUpdate(weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2, dweight1, dbias1,dweight1B,dbias1B,dweight1C,dbias1C, dweight2, dbias2, beta)
+        if i % 10 == 0:
+            print("Epochs: ", i)
+            pred = get_pred(a2)
+            print(get_precision(pred, Y)*100,'%')
+    return   weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2
+#Model training 
+weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2   = gradientDescent(X_train, Y_train, 0.10, 1000)
+#Create the predictions for the testing set
+def makePred(X, weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2):
+    _, _, _, _,_,_,_,a2=forward(  weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2, X)
+    pred=get_pred(a2)
+    return pred
+def testPred(index, weight1, bias1,weight1B, bias1B,weight1C,bias1C,weight2, bias2):
+    image=X_test[:,index,None]
+    pred=makePred(X_test[:, index, None],   weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2)
+    label=Y_test[index]
+    print('Prediction: ', pred)
+    print('Label: ', label)
+    image=image.reshape((28,28))
+    plt.imshow(image)
+    plt.show()
+#Check the accuracy of the model
+devPred=makePred(X_test,   weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2)
+print('Precision on testing data: ',(get_precision(devPred, Y_test))*100,'%')
+   
