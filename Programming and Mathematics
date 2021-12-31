@@ -310,6 +310,8 @@ def get_pred(a2):
 def get_precision(pred, Y):
     print(pred, Y)
     return np.sum(pred == Y) / Y.size
+import time
+start_time = time.time()
 #The gradient descent function
 def gradientDescent(X, Y, beta, iterations):
     weight1, bias1,weight1B, bias1B, weight1C,bias1C, weight2, bias2  = parametres()
@@ -321,6 +323,7 @@ def gradientDescent(X, Y, beta, iterations):
             print("Epochs: ", i)
             pred = get_pred(a2)
             print(get_precision(pred, Y)*100,'%')
+    print(f'\nDuration: {time.time() - start_time:.0f} seconds')
     return   weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2
 #Model training 
 weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2   = gradientDescent(X_train, Y_train, 0.10, 1000)
@@ -341,4 +344,179 @@ def testPred(index, weight1, bias1,weight1B, bias1B,weight1C,bias1C,weight2, bia
 #Check the accuracy of the model
 devPred=makePred(X_test,   weight1, bias1,weight1B, bias1B,weight1C,bias1C, weight2, bias2)
 print('Precision on testing data: ',(get_precision(devPred, Y_test))*100,'%')
+######################################
+#####Task4#######
+
+#Import libraries
+import torch
+import torch.nn as nn
+import torch.nn.functional as fn 
+import seaborn as sn  # for heatmaps
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+from sklearn.metrics import confusion_matrix
+%matplotlib inline
+import matplotlib.pyplot as plt
+import numpy as np
+transform = transforms.ToTensor()
+#Load data
+data_path = "C:\Cifar10_Data"
+train_Ciffar = datasets.CIFAR10(data_path, train=True, download=True, transform=transform)
+test_Ciffar = datasets.CIFAR10(data_path, train=False, download=True, transform=transform)
+#Separate trains and test
+torch.manual_seed(101)
+load_train = DataLoader(train_Ciffar, batch_size=100, shuffle=True)
+load_test = DataLoader(test_Ciffar, batch_size=500, shuffle=False)
+class_names = ['plane', '  car', ' bird', '  cat', ' deer', '  dog', ' frog', 'horse', ' ship', 'truck']
+for images,labels in load_train:
+    break
+labels
+#Create the layers
+class Layers(nn.Module):
+
+    def __init__(self, input_size=32*32*3, output_size=10):
+        super().__init__()
+        self.ciff1 = nn.Linear(input_size, 120)
+        self.ciff2 = nn.Linear(120, 84)
+        self.ciff3 = nn.Linear(84, output_size)
+        #self.dropout = nn.Dropout(p=0.5)
+
+    def forward(self, X):
+        X = fn.relu(self.ciff1(X))
+        X = fn.relu(self.ciff2(X))
+        X = self.ciff3(X)
+
+        return fn.log_softmax(X, dim=1)
+ torch.manual_seed(101)
+model = Layers()
+model
+#Count the paramers
+def count_parameters(model):
+    params = [p.numel() for p in model.parameters() if p.requires_grad]
+    for item in params:
+        print(f'{item:>6}')
+    print(f'______\n{sum(params):>6}')
+count_parameters(model)
+#Optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+#optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+images.shape
+images.view(-1, 3072).shape
+#Training the model
+import time
+start_time = time.time()
+
+epochs = 10
+
+train_losses = []
+test_losses = []
+train_correct = []
+test_correct  = []
+
+for i in range(epochs):
    
+    trn_corr = 0
+    tst_corr = 0
+    batch_corr = 0
+    
+     # Run the training batches
+    for b, (X_train, y_train) in enumerate(load_train):
+        
+        b +=1
+        
+        # Apply the model
+        y_pred = model(X_train.view(100, -1))
+        loss = criterion(y_pred, y_train)
+        
+         # Tally the number of correct predictions
+        predicted = torch.max(y_pred.data, 1)[1]
+        batch_corr = (predicted == y_train).sum()
+        trn_corr += batch_corr
+        
+        # Update parameters
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        # Print interim results 
+        if b % 100 == 0:
+        
+            accuracy = trn_corr.item()*100 / (100*b)
+            print( f'epoch: {i} batch {b} loss:{loss.item():} accuracy:{accuracy:} % ')
+    
+    train_losses.append(loss)
+    train_correct.append(trn_corr)
+
+    with torch.no_grad():
+      
+            for b, (X_test, y_test) in enumerate(load_test):
+        
+                y_val = model(X_test.view(500, -1))
+        
+                predicted = torch.max(y_val.data, 1)[1]
+                tst_corr += (predicted == y_test).sum()
+     
+    loss = criterion(y_val,y_test)
+    test_losses.append(loss)
+    test_correct.append(tst_corr)
+
+print(f'\nDuration: {time.time() - start_time:.0f} seconds')    
+#Plot the trainig validation accuracy
+plt.plot([t/500 for t in train_correct], label='training accuracy')
+plt.plot([t/100 for t in test_correct], label='validation accuracy')
+plt.title('Accuracy at the end of each epoch')
+plt.legend();
+#Print the accuracy
+print(test_correct) # contains the results of all 10 epochs
+print()
+print(f'Test accuracy: {test_correct[-1].item()*100/10000:.3f}%') # print the most recent result as a percent
+# Display the number of misses
+misses = np.array([])
+for i in range(len(predicted.view(-1))):
+    if predicted[i] != y_test[i]:
+        misses = np.append(misses,i).astype('int64')
+        
+
+len(misses)
+#Confusion matrix
+confusion_matrix(predicted.view(-1),y_test.view(-1))
+# we are turning off the gradients
+img = images[0].view(1, 3072)
+with torch.no_grad():
+    model_prediction = model.forward(img)
+#Check one image
+probabilities = fn.softmax(model_prediction, dim=1).detach().cpu().numpy().squeeze()
+
+print(probabilities)
+
+fig, (ax1, ax2) = plt.subplots(figsize=(6,8), ncols=2)
+img = img.view(3, 32, 32)
+ax1.imshow(img.permute(1, 2, 0).detach().cpu().numpy().squeeze(), cmap='inferno')
+ax1.axis('off')
+ax2.barh(np.arange(10), probabilities, color='r' )
+ax2.set_aspect(0.1)
+ax2.set_yticks(np.arange(10))
+ax2.set_yticklabels(np.arange(10))
+ax2.set_title('Class Probability')
+ax2.set_xlim(0, 1.1)
+
+plt.tight_layout()
+#Plot images and predictions
+test_load_all = DataLoader(test_Ciffar, batch_size=64, shuffle=False)
+images, labels = next(iter(test_load_all))
+
+with torch.no_grad():
+    images, labels = images, labels
+    preds = model(X_test.view(len(X_test),-1))
+
+images_np = [i.mean(dim=0).cpu().numpy() for i in images]
+class_names = test_Ciffar.classes
+fig = plt.figure(figsize=(10, 8))
+fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.5, wspace=0.05)
+
+for i in range(64):
+    ax = fig.add_subplot(8, 8, i + 1, xticks=[], yticks=[])
+    ax.imshow(images_np[i], cmap='gray', interpolation='nearest')
+    color = "blue" if labels[i] == torch.max(preds[i], 0)[1] else "red"
+    plt.title(class_names[torch.max(preds[i], 0)[1]], color=color, fontsize=15)
