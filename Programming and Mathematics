@@ -2,17 +2,18 @@
 #IMPORT lIBRARY
 from numpy.random import default_rng
 rng = default_rng()
+rng = default_rng()
+k=''
 while True:#While loop for the exception of entering only integers
     try:
-        print('Plese enter the level of the game')
-        k=int(input('You have entered '))#Input for the value of the game grid
-        k=int(k)
+      
+        k=int(input('Plese enter the level of the game: '))#Input for the value of the game grid
         data = rng.uniform(1,15,(k,k))#The uniform numbers that will populate the grid
         #Creating the board
         board=[["|    |" for a in range(k)] for b in range(k)]
         for s in range (k):
             for m in range(k):
-                board[s][m]=f"  {data[s,m]:.2f}"
+                 board[s][m]=f"  {data[s,m]:.2f}"
         print('_______'*k)
         for i in board:
             print(''.join(i))
@@ -22,7 +23,7 @@ while True:#While loop for the exception of entering only integers
         h=float(board[l][t])
         h1=float(board[l][t])
         finished=False
-        MODE=input('Please enter wich game mode do you want 1 or 2')
+        MODE=input('Please enter wich game mode do you want 1 or 2: ')
         print('Instructions')
         print('Up: U')
         print('Down: D')
@@ -43,7 +44,7 @@ while True:#While loop for the exception of entering only integers
                                 t=t
                                 h1=float(board[l][t])
                                 h=h+h1
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go up")
             
@@ -56,7 +57,7 @@ while True:#While loop for the exception of entering only integers
                                 t=t
                                 h1=float(board[l][t])
                                 h=h+h1
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go down")
                 
@@ -66,7 +67,7 @@ while True:#While loop for the exception of entering only integers
                                 t=t-1
                                 h1=float(board[l][t])
                                 h=h+h1
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go left")
            
@@ -77,12 +78,14 @@ while True:#While loop for the exception of entering only integers
                                 t=t+1
                                 h1=float(board[l][t])
                                 h=h+h1
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go right")
+                    elif  direction=='0':
+                            finished=True
             
                     else:
-                            print('Please press one of the fallowing W, S, A, D')
+                            print('Please press one of the fallowing U, D, L, R')
         
     
                 elif MODE=='2':#Selecting the second game mood
@@ -96,7 +99,7 @@ while True:#While loop for the exception of entering only integers
                                 h1=float(board[l][t])
                                 h=h-h1
                                 h=abs(h)
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go up")
             
@@ -110,7 +113,7 @@ while True:#While loop for the exception of entering only integers
                                 h1=float(board[l][t])
                                 h=h-h1
                                 h=abs(h)
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go down")
                 
@@ -121,7 +124,7 @@ while True:#While loop for the exception of entering only integers
                                 h1=float(board[l][t])
                                 h=h-h1
                                 h=abs(h)
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go left")
            
@@ -133,23 +136,42 @@ while True:#While loop for the exception of entering only integers
                                 h1=float(board[l][t])
                                 h=h-h1
                                 h=abs(h)
-                                print(h)
+                                print(f'{h:.2f}')
                             else:
                                 print("You can't go right")
                     #Condition to enter just the four directions
+                    elif  direction=='0':
+                              finished=True
+                
+                            
                     else: 
-                            print('Please press one of the fallowing W, S, A, D')
+                        print('Please press one of the fallowing U, D, L, R')
+                else:
+                    print('Wrong Input')
+                    finished=True
+                
+                   
+                    
+            
         
                 #Condition to enter just the 2 game moodes
-                else:
-                    print('Please enter 1 or 2')
-            else:finished=True
-        #fINAL RESULT
-        print('The path choosee by you has a lenght of', h,'Next player')
-        break
+            else:
+                print(f"The path choose by you has a cost of: {h:.2f}. Next Game")    
+                finished=True
+                
+                
+    
+       
+            
+     
     except:
-        print('Only integers allowed')
-print(' ')      
+        if k==0:
+            break
+          
+        else:
+            print('Only integers allowed')
+        
+              
 
    
 
