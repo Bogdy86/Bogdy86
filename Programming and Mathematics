@@ -1,3 +1,158 @@
+####Task1#####
+#IMPORT lIBRARY
+from numpy.random import default_rng
+rng = default_rng()
+while True:#While loop for the exception of entering only integers
+    try:
+        print('Plese enter the level of the game')
+        k=int(input('You have entered '))#Input for the value of the game grid
+        k=int(k)
+        data = rng.uniform(1,15,(k,k))#The uniform numbers that will populate the grid
+        #Creating the board
+        board=[["|    |" for a in range(k)] for b in range(k)]
+        for s in range (k):
+            for m in range(k):
+                board[s][m]=f"  {data[s,m]:.2f}"
+        print('_______'*k)
+        for i in board:
+            print(''.join(i))
+            print('_______'*k)
+        l=0
+        t=0   
+        h=float(board[l][t])
+        h1=float(board[l][t])
+        finished=False
+        MODE=input('Please enter wich game mode do you want 1 or 2')
+        print('Instructions')
+        print('Up: U')
+        print('Down: D')
+        print('Left: L')
+        print('Right: R')
+        # While loop for playing the game
+        while not finished: 
+    
+            #Condition for ending the game
+            if [l,t]!=[k-1,k-1]:
+                if MODE=='1':#Selecting the first game mode
+                    #Chooseing the directions
+                    direction=input(' Please enter one of the above options: ')
+                    direction=direction.upper()
+                    if direction=='U':
+                            if l!=0:
+                                l=l-1
+                                t=t
+                                h1=float(board[l][t])
+                                h=h+h1
+                                print(h)
+                            else:
+                                print("You can't go up")
+            
+       
+        
+                    elif direction=='D':
+                            if l!=(k-1):
+                
+                                l=l+1
+                                t=t
+                                h1=float(board[l][t])
+                                h=h+h1
+                                print(h)
+                            else:
+                                print("You can't go down")
+                
+                    elif direction=='L':
+                            if t!=0:
+                                l=l
+                                t=t-1
+                                h1=float(board[l][t])
+                                h=h+h1
+                                print(h)
+                            else:
+                                print("You can't go left")
+           
+        
+                    elif direction=='R':
+                            if t!=(k-1):
+                                l=l
+                                t=t+1
+                                h1=float(board[l][t])
+                                h=h+h1
+                                print(h)
+                            else:
+                                print("You can't go right")
+            
+                    else:
+                            print('Please press one of the fallowing W, S, A, D')
+        
+    
+                elif MODE=='2':#Selecting the second game mood
+                    #Choosing the directions
+                    direction=input(' Please enter one of the above options: ')
+                    direction=direction.upper()
+                    if direction=='U':
+                            if l!=0:
+                                l=l-1
+                                t=t
+                                h1=float(board[l][t])
+                                h=h-h1
+                                h=abs(h)
+                                print(h)
+                            else:
+                                print("You can't go up")
+            
+       
+        
+                    elif direction=='D':
+                            if l!=(k-1):
+                
+                                l=l+1
+                                t=t
+                                h1=float(board[l][t])
+                                h=h-h1
+                                h=abs(h)
+                                print(h)
+                            else:
+                                print("You can't go down")
+                
+                    elif direction=='L':
+                            if t!=0:
+                                l=l
+                                t=t-1
+                                h1=float(board[l][t])
+                                h=h-h1
+                                h=abs(h)
+                                print(h)
+                            else:
+                                print("You can't go left")
+           
+        
+                    elif direction=='R':
+                            if t!=(k-1):
+                                l=l
+                                t=t+1
+                                h1=float(board[l][t])
+                                h=h-h1
+                                h=abs(h)
+                                print(h)
+                            else:
+                                print("You can't go right")
+                    #Condition to enter just the four directions
+                    else: 
+                            print('Please press one of the fallowing W, S, A, D')
+        
+                #Condition to enter just the 2 game moodes
+                else:
+                    print('Please enter 1 or 2')
+            else:finished=True
+        #fINAL RESULT
+        print('The path choosee by you has a lenght of', h,'Next player')
+        break
+    except:
+        print('Only integers allowed')
+print(' ')      
+
+   
+
 #Task2#
 from sklearn.datasets import make_regression
 import matplotlib.pyplot as plt
