@@ -235,6 +235,33 @@ if k==3:
     
 
     print(f"First game mood: {v}")
+    ############################################################################
+    v
+lenght=(len(v.values()))
+total=(sum(v.values()))
+mean=total/lenght
+
+v2
+lenght1=(len(v2.values()))
+total1=(sum(v2.values()))
+mean1=total1/lenght1
+print('The mean of path1:',mean)
+print('Total sum of path 1:', total)
+print('The max value of path 1:',max(v.values()))
+print('The mean of path2:',mean1)
+print('Total sum of path 2:', total1)
+print('The max value of path 2:', max(v2.values()))
+total=(sum((v.values())))
+print(lenght)
+print(lenght1)
+std=np.sqrt(((0-mean)**2+ (5.63-mean)**2+ (8.19-mean)**2+(9.45-mean)**2+(10.34-mean)**2+(11.52-mean)**2+(22.42-mean)**2+(26.73-mean)**2+(28.599-mean)**2)/9)
+print('Standard deviation path 1:', std)
+std2=np.sqrt(((0-mean1)**2+(1.87-mean1)**2+(1.95-mean1)**2+ (2.82-mean1)**2+(3.07-mean1)**2+(5.03-mean1)**2+(10.63-mean1)**2+(10.68-mean1)**2+(13.55-mean1)**2)/9)
+print('Standard deviation path 2:', std2)
+p=1-max(v.values())/total-0
+print('Probability density function path 1:',p)
+p2=1-max(v2.values())/total1-0
+print('Probability density function path 2:',p2)
     
     #########################################################################################
 
