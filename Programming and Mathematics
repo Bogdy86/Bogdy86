@@ -938,13 +938,13 @@ for i in range(len(predicted.view(-1))):
         misses = np.append(misses,i).astype('int64')
         
 # Display the number of misses
-len(misses)
+print('Number of misses:',len(misses))
 # Display the first 8 index positions
 misses[:8]
 # Set up an iterator to feed batched rows
 r = 8   # row size
 row = iter(np.array_split(misses,len(misses)//r+1))
-#np.set_printoptions(formatter=dict(int=lambda x: f'{x:5}')) # to widen the printed array
+
 
 nextrow = next(row)
 lbls = y_test.index_select(0,torch.tensor(nextrow)).numpy()
