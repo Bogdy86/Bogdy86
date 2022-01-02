@@ -170,8 +170,106 @@ while True:#While loop for the exception of entering only integers
           
         else:
             print('Only integers allowed')
-        
-              
+###########Dijkstra altgorithm        
+k=int(input('Plese enter the level of the game: '))#Input for the value of the game grid
+if k==3:
+    data = rng.uniform(1,15,(k,k))#The uniform numbers that will populate the grid
+    #Creating the board
+    board=[["|    |" for a in range(k)] for b in range(k)]
+    for s in range (k):
+        for m in range(k):
+                board[s][m]=f"  {data[s,m]:.2f}"
+    print('_______'*k)
+    for i in board:
+        print(''.join(i))
+        print('_______'*k)
+    l=0
+    t=0   
+    h=float(board[l][t])
+    h1=float(board[l][t])
+
+
+    A=float(board[0][0])
+    B=float(board[1][0])
+    C=float(board[2][0])
+    D=float(board[0][1])
+    E=float(board[1][1])
+    F=float(board[2][1])
+    G=float(board[0][2])
+    H=float(board[1][2])
+    I=float(board[2][2])
+
+
+
+    n1 = ('A', 'B', 'C', 'D', 'E', 'F', 'G','H','I')
+    distances = {
+    
+        'A': {'B': A+B, 'D': A+D},
+        'B': {'A': A+B, 'C': B+C, 'E': B+E},
+        'D': {'A': A+D, 'G': D+G, 'E': D+E},
+        'G': {'D': D+G, 'H': G+H},
+        'C': {'B': B+C, 'F':C+F },
+        'E': {'B': B+E, 'D':D+E, 'F':E+F},
+        'F': {'C': C+F, 'E': E+F, 'I':F+I},
+        'H': {'E': E+H, 'G':G+H, 'I':H+I},
+        'I': {'H': H+I, 'F':F+I}}
+
+    unv = {node: None for node in n1} #using None as +inf
+    v = {}
+    current = 'A'
+    currentDistance = 0
+    unv[current] = currentDistance
+
+    while True:
+        for neighbour, distance in distances[current].items():
+            if neighbour not in unv: continue
+            newDistance = currentDistance + distance
+            if unv[neighbour] is None or unv[neighbour] > newDistance:
+                unv[neighbour] = newDistance
+        v[current] = currentDistance
+        del unv[current]
+        if not unv: break
+        candidates = [node for node in unv.items() if node[1]]
+        current, currentDistance = sorted(candidates, key = lambda x: x[1])[0]
+    
+    
+
+    print(f"First game mood: {v}")
+    
+    #########################################################################################
+
+    n2 = ('A', 'B', 'C', 'D', 'E', 'F', 'G','H','I')
+    distances2 = {
+   
+        'A': {'B': abs(A-B), 'D': abs(A-D)},
+        'B': {'A': abs(A-B), 'C': abs(B-C), 'E': abs(B-E)},
+        'D': {'A': abs(A-D), 'G': abs(D-G), 'E': abs(D-E)},
+        'G': {'D': abs(D-G), 'H': abs(G-H)},
+        'C': {'B': abs(B-C), 'F':abs(C-F) },
+        'E': {'B': abs(B-E), 'D':abs(D-E), 'F':abs(E-F)},
+        'F': {'C': abs(C-F), 'E': abs(E-F), 'I':abs(F-I)},
+        'H': {'E': abs(E-H), 'G':abs(G-H), 'I':abs(H-I)},
+        'I': {'H': abs(H-I), 'F':abs(F-I)}}
+
+    unv2 = {node2: None for node2 in n2} #using None as +inf
+    v2 = {}
+    current2 = 'A'
+    currentDistance2 = 0
+    unv2[current2] = currentDistance2
+
+    while True:
+        for neighbour2, distance2 in distances2[current2].items():
+            if neighbour2 not in unv2: continue
+            newDistance2 = currentDistance2 + distance2
+            if unv2[neighbour2] is None or unv2[neighbour2] > newDistance2:
+                unv2[neighbour2] = newDistance2
+        v2[current2] = currentDistance2
+        del unv2[current2]
+        if not unv2: break
+        candidates2 = [node2 for node2 in unv2.items() if node2[1]]
+        current2, currentDistance2 = sorted(candidates2, key = lambda x2: x2[1])[0]
+    print(f"Second game mood: {v2}")
+else:print('Please enter 3')              
 
    
 
