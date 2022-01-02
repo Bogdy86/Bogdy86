@@ -1,3 +1,4 @@
+Bogdan-Constantin Petrus
 ####Task1#####
 #IMPORT lIBRARY
 from numpy.random import default_rng
