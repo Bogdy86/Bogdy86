@@ -921,10 +921,14 @@ print(test_correct) # contains the results of all 10 epochs
 print()
 print(f'Test accuracy: {test_correct[-1].item()*100/10000:.3f}%') # print the most recent result as a percent
 # Confussion matrix
+# Confussion matrix
 test_load_all = DataLoader(test_Ciffar, batch_size=10000, shuffle=False)
-
-
-
+with torch.no_grad():
+    correct = 0
+    for X_test, y_test in test_load_all:
+        y_val = model(X_test)
+        predicted = torch.max(y_val,1)[1]
+        correct += (predicted == y_test).sum()
 arr = confusion_matrix(y_test.view(-1), predicted.view(-1))
 df_cm = pd.DataFrame(arr, class_names, class_names)
 plt.figure(figsize = (9,6))
