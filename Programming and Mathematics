@@ -214,7 +214,7 @@ if k==3:
         'H': {'E': E+H, 'G':G+H, 'I':H+I},
         'I': {'H': H+I, 'F':F+I}}
 
-    unv = {node: None for node in n1} #using None as +inf
+    unv = {node: None for node in n1}
     v = {}
     current = 'A'
     currentDistance = 0
@@ -251,7 +251,7 @@ if k==3:
         'H': {'E': abs(E-H), 'G':abs(G-H), 'I':abs(H-I)},
         'I': {'H': abs(H-I), 'F':abs(F-I)}}
 
-    unv2 = {node2: None for node2 in n2} #using None as +inf
+    unv2 = {node2: None for node2 in n2}
     v2 = {}
     current2 = 'A'
     currentDistance2 = 0
