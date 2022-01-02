@@ -8,7 +8,7 @@ while True:#While loop for the exception of entering only integers
     try:
       
         k=int(input('Plese enter the level of the game: '))#Input for the value of the game grid
-        data = rng.uniform(1,15,(k,k))#The uniform numbers that will populate the grid
+        data = rng.uniform(0,15,(k,k))#The uniform numbers that will populate the grid
         #Creating the board
         board=[["|    |" for a in range(k)] for b in range(k)]
         for s in range (k):
@@ -173,7 +173,7 @@ while True:#While loop for the exception of entering only integers
 ###########Dijkstra altgorithm        
 k=int(input('Plese enter the level of the game: '))#Input for the value of the game grid
 if k==3:
-    data = rng.uniform(1,15,(k,k))#The uniform numbers that will populate the grid
+    data = rng.uniform(0,15,(k,k))#The uniform numbers that will populate the grid
     #Creating the board
     board=[["|    |" for a in range(k)] for b in range(k)]
     for s in range (k):
